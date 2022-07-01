@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "constants.h"
 #include "board.h"
+#include "SFML/Audio.hpp"
 #include <ctime>
 
 int main() {
@@ -12,7 +13,17 @@ int main() {
     if(!font.loadFromFile("font/Pixeled.ttf")) {
         std::cerr << "Could not load font.";
     }
-    Board board(8,8, font);
+    sf::SoundBuffer lossBuffer;
+    if(!lossBuffer.loadFromFile("sounds/explosion.wav")) return -1;
+    sf::Sound lossSound;
+    lossSound.setBuffer(lossBuffer);
+
+    sf::SoundBuffer winBuffer;
+    if(!winBuffer.loadFromFile("sounds/win.wav")) return -1;
+    sf::Sound winSound;
+    winSound.setBuffer(winBuffer);
+
+    Board board(8,8, font, lossSound, winSound);
     while(window.isOpen()) {
         sf::Event event;
         if(window.pollEvent(event)) {
@@ -31,7 +42,7 @@ int main() {
                     }
                 }  
             }
-            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && board.IsGameOver()) {
+            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space && (board.IsGameOver() || board.IsGameWon())) {
                 board.Reset();
             }
         }

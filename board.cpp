@@ -6,9 +6,12 @@
 #include <iostream>
 #include <ctime>
 #include "SFML/Graphics.hpp"
-Board::Board(int rows, int columns, sf::Font font) {
+#include "SFML/Audio.hpp"
+Board::Board(int rows, int columns, sf::Font font, sf::Sound lossSound, sf::Sound winSound) {
     Rows = rows;
     Font = font;
+    LossSound = lossSound;
+    WinSound = winSound;
     Columns = columns;
     GameOver = false;
     GameWon = false;
@@ -54,8 +57,10 @@ void Board::Reveal(Square& square) {
             }   
         }
         if(square.isBomb) {
+            LossSound.play();
             GameOver = true;
         }
+        if(IsGameWon()) WinSound.play();
     } 
 }
 Square& Board::GetSquareAtWindowPos(int window_x, int window_y) {
