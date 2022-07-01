@@ -22,7 +22,7 @@ int main() {
             if(event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 Square& square = board.GetSquareAtWindowPos(mousePos.x, mousePos.y);
-                if(!board.IsGameOver()) {
+                if(!(board.IsGameOver() || board.IsGameWon()) ) {
                     if(event.mouseButton.button == sf::Mouse::Right) {
                     board.ToggleFlag(square);
                     }
@@ -37,13 +37,19 @@ int main() {
         }
         window.clear(sf::Color::White);
         board.Draw(window);
-        if(board.IsGameOver()) {
+        if(board.IsGameOver() || board.IsGameWon()) {
             sf::Text text;
             text.setFont(font);
             text.setCharacterSize(24);
-            text.setString("Press Space to Restart!");
             text.setPosition(sf::Vector2f(150, WINDOW_HEIGHT / 2));
             text.setFillColor(sf::Color::Black);
+            
+            if(board.IsGameOver()) {
+                text.setString("Press Space to Restart!");
+            }
+            else {
+                text.setString("Nice one!\nPress Space to Restart!");
+            }
             window.draw(text);
         }
         window.display();

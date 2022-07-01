@@ -22,6 +22,7 @@ class Board {
     int Rows;
     int Columns;
     bool GameOver;
+    bool GameWon;
     public:
     
     Board(int rows, int columns, sf::Font font);
@@ -33,6 +34,7 @@ class Board {
     void InitializeBombs(float probability);
     void InitializeBombCounts();
     bool IsGameOver();
+    bool IsGameWon();
     void Reset();
     std::vector<Square> GetSquaresAdjacentTo(Square& square);
 };

@@ -11,6 +11,7 @@ Board::Board(int rows, int columns, sf::Font font) {
     Font = font;
     Columns = columns;
     GameOver = false;
+    GameWon = false;
     for (int i = 0; i < rows; i++) {
         Grid.push_back(std::vector<Square>());
         SpriteGrid.push_back(std::vector<sf::RectangleShape>());
@@ -71,7 +72,12 @@ void Board::Draw(sf::RenderWindow& window) {
             sf::Vector2f size = sf::Vector2f(WINDOW_WIDTH / Rows - 5, WINDOW_HEIGHT / Columns - 5);
             if(square.type == empty) sprite.setFillColor(sf::Color(230,230,230));
             if(square.type == flagged) sprite.setFillColor(sf::Color(255, 153, 153));
-            if(square.isBomb && square.type == revealed) sprite.setFillColor(sf::Color(80, 80, 80));
+            if(IsGameOver()) {
+                if(square.isBomb) sprite.setFillColor(sf::Color(80, 80, 80));
+            }
+            else {
+                if(square.isBomb && square.type == revealed) sprite.setFillColor(sf::Color(80, 80, 80));
+            }
             
             
             sprite.setSize(size);
@@ -138,4 +144,19 @@ void Board::InitializeBombCounts() {
 }
 bool Board::IsGameOver() {
     return GameOver;
+}
+bool Board::IsGameWon() {
+    if(IsGameOver()) {
+        return false;
+    }
+    int unrevealedSquares = 0;
+    int bombs = 0;
+    for(int i = 0; i < Rows; i++) {
+        for(int j = 0; j < Columns; j++) {
+            Square& square = GetSquareAt(i,j);
+            if(square.type != revealed) ++unrevealedSquares;
+            if(square.isBomb) ++ bombs;
+        }
+    }
+    return unrevealedSquares == bombs;
 }
